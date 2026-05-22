@@ -1,28 +1,17 @@
-
-<p></p>
-<h2 class="text-center"> </h2>
-
-<div class="row" >
-    <div class="col-md-3">
+<div class="alert-page">
+  <div class="alert-card success">
+    <div class="alert-card-icon">
+      <mat-icon>mark_email_read</mat-icon>
     </div>
-    <div class="col-md-6 col-md-offset-3">
-        <div class="jumbotron">
-            <form autocomplete="off" >
-                <!-- affiche un message apres avoir crée son compte -->
-               
-<span > 
-    <h2>
-        Votre compte a été créé , Un e-mail a été envoyé à votre adresse e-mail   <cite>
-            <u style="color:blue">{{ getUserEmail()}} </u> 
-           </cite> contenant un lien d'activation. Veuillez cliquer sur le <a style="color:palevioletred" href="https://mail.google.com/mail/u/0/#inbox">lien
-                
-        </a>  pour activer votre compte
-           
-         </h2> 
-</span>   
-            </form>
-        </div>
+    <h2 class="alert-card-title">Compte créé avec succès</h2>
+    <p class="alert-card-msg">
+      Un e-mail de vérification a été envoyé à
+      <span class="alert-email">{{ getUserEmail() }}</span>.
+      Veuillez cliquer sur le lien dans cet e-mail pour activer votre compte.
+    </p>
+    <div class="alert-card-hint">
+      <mat-icon style="font-size:16px;width:16px;height:16px;">inbox</mat-icon>
+      Pensez à vérifier votre dossier spam si vous ne recevez pas l'e-mail.
     </div>
-    <div class="col-md-3">
-    </div>
+  </div>
 </div>

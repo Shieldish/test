@@ -2,7 +2,7 @@
 <html>
    <head>
       <title>Reset password</title>
-      <!-- <meta http-equiv = "refresh" content = "3; url = http://localhost:8080/loginresetpassword" /> -->
+      <!-- <meta http-equiv = "refresh" content = "3; url = ' . (getenv('APP_FRONT_URL') ?: 'http://localhost:8080') . '/loginresetpassword" /> -->
    </head>
    <body>
      
@@ -49,15 +49,15 @@ $request = json_decode($postdata);
 
              
 
-            // header ('http://localhost:8080/loginresetpassword');
+            // header ('' . (getenv('APP_FRONT_URL') ?: 'http://localhost:8080') . '/loginresetpassword');
 
             
 
-            $msg='<div  color="green" class="data"><p style="color:blue">you will be redirect to reset password dashboard  or click  <a href="http://localhost:8080/loginresetpassword">here</a> to reste your account
+            $msg='<div  color="green" class="data"><p style="color:blue">you will be redirect to reset password dashboard  or click  <a href="' . (getenv('APP_FRONT_URL') ?: 'http://localhost:8080') . '/loginresetpassword">here</a> to reste your account
               <p>   <html>
               <head>
                  <title>Reset password</title>
-                 <meta http-equiv = "refresh" content = "3; url = http://localhost:8080/loginresetpassword" />
+                 <meta http-equiv = "refresh" content = "3; url = ' . (getenv('APP_FRONT_URL') ?: 'http://localhost:8080') . '/loginresetpassword" />
               </head>
             </html> 
                 </p> 

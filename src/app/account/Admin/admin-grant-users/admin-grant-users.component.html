@@ -1,66 +1,96 @@
-<h2 class="text-center"> Edit User</h2>
-<!-- <div class="jumbotron"> -->
-<div class="row">
-    <div class="col-md-3">
-    </div>
-    <div class="col-md-7 col-md-offset-5">
-        
-            <form [formGroup]="angForm" (ngSubmit)="postdata(angForm)" autocomplete="off" >
-                <table  class="table table-hover" >
-                    <thead>
-                    <tr>
-                                            <!-- l'entete de la table -->
-                      <th>ID</th>
-                      <th>Name</th>
-                      <!-- <th>Email</th> -->
-                      <!-- <th>Authorization</th> -->
-                       <th>Telechargement</th>
-                      <th>Authoriser</th>
-                      <th>update</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                                        <!-- les contenues de la table -->
-                    <tr >
-                    <td><input readonly="true" type="id" name="id" formControlName="id"  autocomplete="off" class="form-control input-sm"></td>
-                    <td><input readonly="true" type="text" name="name" formControlName="name" autocomplete="off" class="form-control input-sm" ></td>
-                    <!-- <td><input readonly="true" type="email" name="email" formControlName="email"   autocomplete="off" class="form-control input-sm " ></td> -->
-                    <!-- <td><input readonly="true" type="Authorization" name="Authorization" formControlName="Authorization"   class="form-control input-sm" > </td>-->
-                    <td> 
+<div class="page-container" style="max-width: 700px;">
 
-                      <section class="example-section">
-                                     <!-- le bouton checkbox pour autorisé un user a telecharger des donnees -->
+  <div class="page-header">
+    <h1 class="page-title">Modifier les permissions</h1>
+    <p class="page-subtitle">Gérez les droits d'accès et de téléchargement de l'utilisateur</p>
+  </div>
 
-                        <div *ngIf=" tel==0 ; then dothis else doelse"></div>
-                        <ng-template #dothis> <mat-checkbox class="example-margin"  [checked]="false" (change)="checked=!checked" (click)="checkCheckBoxvalue(!checked)"  >Checked</mat-checkbox></ng-template>
-                        <ng-template #doelse> <mat-checkbox class="example-margin"  [checked]="true" (change)="checked=!checked" (click)="checkCheckBoxvalue(checked)"  >Checked</mat-checkbox></ng-template>
+  <div class="section-card">
+    <form [formGroup]="angForm" (ngSubmit)="postdata(angForm)" autocomplete="off">
 
-                       
-                      </section>
-                    </td>
-                  <td >                
-                        <!-- le bouton switch toggle pour autoriser un user a acceder au dashboard -->
+      <div class="section-card-body" style="display:flex;flex-direction:column;gap:24px;">
 
-                         <div *ngIf=" aut==0; then faire else no"> </div>
-                         <ng-template #faire>  <mat-slide-toggle  [checked]="false" (change)="checked=!checked" (click)="getstatus(!checked)">Authoriser</mat-slide-toggle> </ng-template>
-                         <ng-template #no>     <mat-slide-toggle  [checked]="true"  (change)="checked=!checked" (click)="getstatus(checked)">Authoriser</mat-slide-toggle> </ng-template>
-                       
-                        
-                  </td>
-                      <td>  <button type="submit" class="btn btn-primary">update</button></td>
-                    </tr>
-                    </tbody>
-                  </table>
-                
-            </form>
-      
-    </div>
-    <div class="col-md-3">
-    </div>
-  
+        <!-- ID & Nom (lecture seule) -->
+        <div class="field-row">
+          <div class="field-group">
+            <label class="field-label">Identifiant</label>
+            <input
+              readonly
+              type="text"
+              name="id"
+              formControlName="id"
+              autocomplete="off"
+              class="field-input readonly">
+          </div>
+          <div class="field-group" style="flex:2">
+            <label class="field-label">Nom d'utilisateur</label>
+            <input
+              readonly
+              type="text"
+              name="name"
+              formControlName="name"
+              autocomplete="off"
+              class="field-input readonly">
+          </div>
+        </div>
+
+        <hr class="divider" style="margin:0">
+
+        <!-- Permissions -->
+        <div class="permissions-grid">
+
+          <!-- Téléchargement -->
+          <div class="permission-card">
+            <div class="permission-icon perm-download">
+              <mat-icon>download</mat-icon>
+            </div>
+            <div class="permission-info">
+              <div class="permission-title">Téléchargement</div>
+              <div class="permission-desc">Autoriser l'export des données en CSV</div>
+            </div>
+            <div class="permission-control">
+              <div *ngIf="tel == 0; then dothis else doelse"></div>
+              <ng-template #dothis>
+                <mat-checkbox [checked]="false" (change)="checked=!checked" (click)="checkCheckBoxvalue(!checked)"></mat-checkbox>
+              </ng-template>
+              <ng-template #doelse>
+                <mat-checkbox [checked]="true" (change)="checked=!checked" (click)="checkCheckBoxvalue(checked)"></mat-checkbox>
+              </ng-template>
+            </div>
+          </div>
+
+          <!-- Autorisation -->
+          <div class="permission-card">
+            <div class="permission-icon perm-auth">
+              <mat-icon>verified_user</mat-icon>
+            </div>
+            <div class="permission-info">
+              <div class="permission-title">Accès au tableau de bord</div>
+              <div class="permission-desc">Autoriser l'accès aux fonctions de recherche</div>
+            </div>
+            <div class="permission-control">
+              <div *ngIf="aut == 0; then faire else no"></div>
+              <ng-template #faire>
+                <mat-slide-toggle [checked]="false" (change)="checked=!checked" (click)="getstatus(!checked)"></mat-slide-toggle>
+              </ng-template>
+              <ng-template #no>
+                <mat-slide-toggle [checked]="true" (change)="checked=!checked" (click)="getstatus(checked)"></mat-slide-toggle>
+              </ng-template>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Submit -->
+        <div style="display:flex;justify-content:flex-end;gap:12px;padding-top:8px;">
+          <button type="submit" class="btn btn-primary">
+            <mat-icon style="font-size:18px;width:18px;height:18px;">save</mat-icon>
+            Enregistrer les modifications
+          </button>
+        </div>
+
+      </div>
+    </form>
+  </div>
+
 </div>
-
-<!-- </div> -->
-
-
-

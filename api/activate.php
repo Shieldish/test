@@ -68,13 +68,13 @@
 
                          //si le compte est activé avec succes
 
-                $msg= '<div  color="green" class="data"><p style="color:blue">notre compte a été activé, vous pouvez maintenant vous connecter  <a href="http://localhost:8080/login">ici</a></p>
+                $msg= '<div  color="green" class="data"><p style="color:blue">notre compte a été activé, vous pouvez maintenant vous connecter  <a href="' . (getenv('APP_FRONT_URL') ?: 'http://localhost:8080') . '/login">ici</a></p>
                 
 
                 <html>
                 <head>
                    <title>Reset password</title>
-                   <meta http-equiv = "refresh" content = "3; url = http://localhost:8080/login" />
+                   <meta http-equiv = "refresh" content = "3; url = ' . (getenv('APP_FRONT_URL') ?: 'http://localhost:8080') . '/login" />
                 </head>
               </html> 
                   </p> 

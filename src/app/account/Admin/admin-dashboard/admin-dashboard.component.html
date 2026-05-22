@@ -1,109 +1,148 @@
-<script src="extensions/multiple-sort/bootstrap-table-multiple-sort.js"></script>
+<div class="page-container">
 
-<div class="container">               
-    <div class="row">
-      <div class="col-md-12">
-        <p></p>
- 
-         <!-- on crée une table pour lister les users de la base -->
-
-        <h2 class="text-center"  ><button class="btn btn-info"   onclick="document.getElementById('myInput').value = ''" (click)="getall()" >Gestion des utilisateurs</button></h2>
-       
-           <p></p>
-
-           <!-- une formulaire pour chercher un user dans le tableau -->
-       <form  [formGroup]="searchFormGroup" (ngSubmit)="handleSearchUser()">
-        <div class="input-group">
-          <label class="input-group-text">KEYWORDS:</label>
-          <input type="text" id="myInput" class="form-control" formControlName="SEARCH" placeholder="ex : utilisateur ou email ">
-          <button class="btn btn-info"> 
-            
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-              <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-            </svg>
-          </button>
-        </div>
-      </form>
-      <p></p>
-
-        <table  class="table table-striped" class="table table-hover"  id="myTable">
-       
-        
-          <thead>
-          <tr>
-                 <!-- l'entete de la table -->
-            <th>ID</th>
-            <th>Utilisateur</th>
-            <th>Email</th>
-            <th>E-mail status </th>
-            <th>Date de creation</th>
-            <th>supprimer utilisateur</th>
-            <th>Telechargement</th>
-            <th>Authorisation</th>
-           
-           
-            <th>Edit</th>
-          </tr>
-          </thead>
-          <tbody>
-            <!-- le les contenues de la table -->
-          <tr *ngFor="let user of users | slice: (page-1) * pageSize : page * pageSize " class="item">
-            
-            <td>{{user.Id}}</td>
-            <td>{{user.name}}</td>
-          
-            <td>{{user.email}}</td>
-            <td> 
-              <div *ngIf="user.status=='active' ;else elseblocks " ><p style="color:darkblue"> confirmer</p></div>
-              <ng-template  #elseblocks><p style="color:orange"> à attente</p></ng-template>
-            </td>
-            <td>{{user.date}}</td>
-
-            <td>
-              <button class="btn btn-warning" (click)="deleteuserdetails(user)"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-              <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-              <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-              </svg></button>
-          </td> 
-                  <td>
-
-
-
-                     <div *ngIf="user.Telechargement==1 ;else el " > <p>    <button mat-flat-button color="primary" >
-                        <mat-icon>get_app</mat-icon></button> </p></div>
-                      <ng-template  #el><p> 
-
-                        <button mat-flat-button color="warn" >
-                        <mat-icon>lock</mat-icon>
-                        </button></p></ng-template>
-
-                   
-                  </td>
-
-
-                  <td > <div *ngIf="user.Authorization==1 ;else elseblock " > <p> <mat-icon class="icon1">check_box</mat-icon>  </p></div>
-                    <ng-template  #elseblock><p> <mat-icon class="icon2">cancel</mat-icon> </p></ng-template></td>
-             
-            
-            <td>  <button class="btn btn-success" (click)="updateUser(user)" style="margin-left: 1px;">Modifier</button></td>
-              
-              
-          </tr>
-          </tbody>
-        </table>
-                         <!-- pour la pagination dans le tableau -->
-        <ngb-pagination
-        [(page)]="page"
-        [pageSize]="pageSize"
-        [collectionSize]="collectionSize">
-      </ngb-pagination>
-
-      
-
-
+  <!-- Header -->
+  <div class="page-header">
+    <div class="page-title-row">
+      <div>
+        <h1 class="page-title">Gestion des utilisateurs</h1>
+        <p class="page-subtitle">{{ users?.length || 0 }} utilisateur(s) enregistré(s)</p>
       </div>
+      <button class="btn btn-secondary" (click)="getall()">
+        <mat-icon style="font-size:18px;width:18px;height:18px;">refresh</mat-icon>
+        Actualiser
+      </button>
     </div>
   </div>
 
+  <!-- Search bar -->
+  <div class="section-card" style="margin-bottom: 24px;">
+    <div class="section-card-body" style="padding: 16px 24px;">
+      <form [formGroup]="searchFormGroup" (ngSubmit)="handleSearchUser()">
+        <div class="search-row">
+          <div class="search-input-wrap">
+            <mat-icon class="search-icon">search</mat-icon>
+            <input
+              id="myInput"
+              type="text"
+              class="search-input"
+              formControlName="SEARCH"
+              placeholder="Rechercher par nom ou adresse e-mail…">
+          </div>
+          <button type="submit" class="btn btn-primary">
+            Rechercher
+          </button>
+          <button type="button" class="btn btn-secondary"
+                  onclick="document.getElementById('myInput').value = ''"
+                  (click)="getall()">
+            Effacer
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 
+  <!-- Table -->
+  <div class="section-card">
+    <div class="table-wrapper">
+      <table class="admin-table" id="myTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Utilisateur</th>
+            <th>Adresse e-mail</th>
+            <th>Statut e-mail</th>
+            <th>Date de création</th>
+            <th>Téléchargement</th>
+            <th>Autorisation</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users | slice: (page-1) * pageSize : page * pageSize" class="item">
 
+            <td class="cell-id">{{ user.Id }}</td>
+
+            <td>
+              <div class="user-cell">
+                <div class="user-avatar">{{ user.name?.charAt(0)?.toUpperCase() }}</div>
+                <span>{{ user.name }}</span>
+              </div>
+            </td>
+
+            <td class="cell-email">{{ user.email }}</td>
+
+            <td>
+              <span *ngIf="user.status == 'active'" class="badge badge-success">
+                <mat-icon style="font-size:12px;width:12px;height:12px;">check_circle</mat-icon>
+                Confirmé
+              </span>
+              <span *ngIf="user.status != 'active'" class="badge badge-warning">
+                <mat-icon style="font-size:12px;width:12px;height:12px;">hourglass_empty</mat-icon>
+                En attente
+              </span>
+            </td>
+
+            <td class="cell-date">{{ user.date }}</td>
+
+            <td>
+              <span *ngIf="user.Telechargement == 1" class="badge badge-success">
+                <mat-icon style="font-size:12px;width:12px;height:12px;">download</mat-icon>
+                Activé
+              </span>
+              <span *ngIf="user.Telechargement != 1" class="badge badge-neutral">
+                <mat-icon style="font-size:12px;width:12px;height:12px;">lock</mat-icon>
+                Désactivé
+              </span>
+            </td>
+
+            <td>
+              <span *ngIf="user.Authorization == 1" class="badge badge-success">
+                <mat-icon style="font-size:12px;width:12px;height:12px;">verified</mat-icon>
+                Autorisé
+              </span>
+              <span *ngIf="user.Authorization != 1" class="badge badge-danger">
+                <mat-icon style="font-size:12px;width:12px;height:12px;">block</mat-icon>
+                Non autorisé
+              </span>
+            </td>
+
+            <td>
+              <div class="action-btns">
+                <button class="btn btn-sm btn-secondary" (click)="updateUser(user)" title="Modifier">
+                  <mat-icon style="font-size:14px;width:14px;height:14px;">edit</mat-icon>
+                  Modifier
+                </button>
+                <button class="btn btn-sm btn-danger" (click)="deleteuserdetails(user)" title="Supprimer">
+                  <mat-icon style="font-size:14px;width:14px;height:14px;">delete_outline</mat-icon>
+                </button>
+              </div>
+            </td>
+
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="empty-state" *ngIf="!users?.length">
+        <mat-icon>group_off</mat-icon>
+        <p>Aucun utilisateur trouvé</p>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-footer">
+      <span class="pagination-info">
+        {{ (page - 1) * pageSize + 1 }}–{{ page * pageSize > collectionSize ? collectionSize : page * pageSize }}
+        sur {{ collectionSize }}
+      </span>
+      <ngb-pagination
+        [(page)]="page"
+        [pageSize]="pageSize"
+        [collectionSize]="collectionSize"
+        [maxSize]="5"
+        [rotate]="true"
+        [boundaryLinks]="true">
+      </ngb-pagination>
+    </div>
+  </div>
+
+</div>

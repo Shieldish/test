@@ -5,6 +5,7 @@ import { DatePipe, formatDate } from '@angular/common';
 import { FormGroup,FormControl, FormBuilder, Validators} from '@angular/forms';
 import { Chart } from 'chart.js';
 import { DataServiceService } from '../data-service.service';
+import { environment } from '../../environments/environment';
 
 
 @Component({
@@ -16,9 +17,9 @@ import { DataServiceService } from '../data-service.service';
 export class RequeteComponent implements OnInit {
      
   headers = new HttpHeaders().set('Content-Type', 'application/json');
-  h2= this.headers.append('Authorization','Basic ' + btoa('elastic:A0VtjSaDA1h494P6ZC42iD0c'));
+  h2= this.headers;
 
-  url="https://std.es.us-central1.gcp.cloud.es.io:9243/echantillon/_search"
+  url = environment.elasticsearchUrl;
   page:any
   chart1: any
   // controle sur daterangz

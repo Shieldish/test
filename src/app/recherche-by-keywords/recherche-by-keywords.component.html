@@ -1,105 +1,140 @@
+<div class="page-container">
 
+  <div class="page-header">
+    <h1 class="page-title">Recherche par mots-clés</h1>
+    <p class="page-subtitle">Interrogez l'index Elasticsearch avec un ou plusieurs termes</p>
+  </div>
 
-    
-        <form #b="ngForm" (ngSubmit)="onSearch(b.value)" [formGroup]="form">
-          
-          <div class="row" >
-            <div class="col-md-2">
+  <form #b="ngForm" (ngSubmit)="onSearch(b.value)" [formGroup]="form">
+
+    <!-- Search panel -->
+    <div class="section-card" style="margin-bottom: 24px;">
+      <div class="section-card-header">
+        <span style="font-weight:600;color:var(--color-gray-800)">Paramètres de recherche</span>
+      </div>
+      <div class="section-card-body">
+        <div class="search-params">
+
+          <div class="param-field" style="flex:3">
+            <label class="param-label" for="keyword">Mot-clé</label>
+            <div class="param-input-wrap">
+              <mat-icon class="param-icon">search</mat-icon>
+              <input
+                id="keyword"
+                type="text"
+                formControlName="keyword"
+                name="keyword"
+                class="param-input"
+                placeholder="Entrez un mot-clé…"
+                ngModel required>
             </div>
-            
-            <div class="col-md-6 col-md-offset-3">
-              
-                <div class="jumbotron">
-         <!--saisir le mot clé-->
-         <div class="form-group">
-          <input type="text" formControlName="keyword" name= keyword class="form-control" placeholder="Keyword" aria-label="keyword" ngModel required>
-         </div>
-          <!--saisir le nombre d'enregistrement-->
-          <div class="form-group">
-          <input type="number" formControlName="size" name= size class="form-control" placeholder="le nombre d'enregistrement" aria-label="size" ngModel required>
           </div>
-          <!--bouton pour envoyer la requete à l'api d'elasticsearch-->
-          <button class="btn btn-success" type="submit"  [disabled]="!form.valid"><mat-label class="a1"> Appliquer</mat-label></button>
-          
+
+          <div class="param-field" style="flex:1">
+            <label class="param-label" for="size">Nombre de résultats</label>
+            <input
+              id="size"
+              type="number"
+              formControlName="size"
+              name="size"
+              class="param-input-number"
+              placeholder="100"
+              min="1"
+              max="10000"
+              ngModel required>
+          </div>
+
+          <div class="param-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="!form.valid">
+              <mat-icon style="font-size:18px;width:18px;height:18px;">search</mat-icon>
+              Rechercher
+            </button>
+          </div>
+
         </div>
-     
-            </div>
-          </div>
-          
-        
-        
+      </div>
+    </div>
 
+    <!-- Visualization + Download toolbar -->
+    <div class="results-toolbar" *ngIf="form.valid">
+      <button type="button" class="btn btn-secondary" (click)="Visualisation()" [disabled]="!form.valid">
+        <mat-icon style="font-size:18px;width:18px;height:18px;">show_chart</mat-icon>
+        Visualisation
+      </button>
 
-<!--bouton pour afficher la visualisation-->
-<button (click)="Visualisation()" class="btn2 btn-success"  [disabled]="!form.valid"><mat-icon>show_chart</mat-icon><mat-label class="a2"> Visualisation</mat-label></button>
+      <div style="flex:1"></div>
 
-<!--affichage des visualisations-->
-<div class="chart-container">
-  <canvas id="canvas">{{page}}</canvas>
-</div>
- 
+      <ng-container *ngIf="getDownloadStatus() == true; else lockDownload">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="fileDowload()"
+          [disabled]="page == undefined || page == '' || page?.hits?.hits?.length == 0">
+          <mat-icon style="font-size:18px;width:18px;height:18px;">download</mat-icon>
+          Télécharger CSV
+        </button>
+      </ng-container>
+      <ng-template #lockDownload>
+        <button type="button" class="btn btn-secondary" disabled title="Permission de téléchargement requise">
+          <mat-icon style="font-size:18px;width:18px;height:18px;">lock</mat-icon>
+          Téléchargement non autorisé
+        </button>
+      </ng-template>
+    </div>
 
-<!--affichage du fichier json qui contients les enregistrements-->     
-<div class="accordion accordion-flush" id="accordionExample">
-  <div class="accordion-item">
-  <h2 class="accordion-header" id="headingTwo">
-    <button (click)="data()" 
-    id="btn"  
-    class="accordion-button collapsed" 
-    type="button" data-bs-toggle="collapse"
-     data-bs-target="#collapseTwo" 
-       aria-expanded="false" 
-     aria-controls="collapseTwo">
-      <mat-label class="a2">Afficher les données</mat-label>
-    </button>
-  </h2>
-  <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-    <div class="accordion-body">
-    <div *ngIf="page==undefined || page=='' || page?.hits?.hits.length==0;then non else oui"></div>
-    <ng-template #oui>
-        <div class="container">
-           <div class="panel">  
-             <!--les données-->
-           <a class="a3">total:{{page?.hits?.hits.length}}</a>
-            <br>
-            <br>
-  
-            <div *ngFor="let a of page?.hits?.hits">
-              
-          
-              <p><em>IdOwner</em> : {{a._source.idOwner}}</p>
-              <p><em>IdPost</em> : {{a._source.idPost}}</p>
-              <p><em>DateOfInsertion</em> : {{a._source.dateOfInsertion}}</p>
-              <p><em>DateOfPost</em> : {{a._source.dateOfPost}}</p>
-              <p><em>FormattedDateOfPost </em> : {{a._source.formattedDateOfPost}}</p>
-              <p><em>LangPost</em> : {{a._source.langPost}}</p>
-              <p><em>Content</em> : {{a._source.content}}</p>
-              <p><em>TreatedPost</em> : {{a._source.treatedPost}}</p>
-              <p><em>UrlPost</em> : {{a._source.urlPost}}</p><p>
-              <p><em>WebsiteUrl</em> : {{a._source.websiteUrl}}</p>
-              <br>
+    <!-- Chart -->
+    <div class="chart-container" *ngIf="page != undefined && page != ''">
+      <canvas id="canvas">{{ page }}</canvas>
+    </div>
+
+    <!-- Data accordion -->
+    <div class="accordion accordion-flush" id="accordionExample" style="margin-top: 24px;">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingTwo">
+          <button
+            (click)="data()"
+            class="accordion-button collapsed"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseTwo"
+            aria-expanded="false"
+            aria-controls="collapseTwo">
+            <mat-icon style="font-size:18px;width:18px;height:18px;margin-right:8px;">table_rows</mat-icon>
+            Afficher les données
+            <span class="record-count" *ngIf="page?.hits?.hits?.length">
+              {{ page?.hits?.hits?.length }} résultat(s)
+            </span>
+          </button>
+        </h2>
+        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+          <div class="accordion-body">
+
+            <ng-template [ngIf]="page?.hits?.hits?.length > 0" [ngIfElse]="non">
+              <div class="data-grid">
+                <div class="data-card" *ngFor="let a of page?.hits?.hits">
+                  <div class="data-card-header">
+                    <span class="lang-badge">{{ a._source.langPost }}</span>
+                    <span class="data-date">{{ a._source.dateOfPost }}</span>
+                  </div>
+                  <div class="data-field"><span class="data-key">IdOwner</span><span class="data-val">{{ a._source.idOwner }}</span></div>
+                  <div class="data-field"><span class="data-key">IdPost</span><span class="data-val">{{ a._source.idPost }}</span></div>
+                  <div class="data-field content-field"><span class="data-key">Contenu</span><span class="data-val">{{ a._source.content }}</span></div>
+                  <div class="data-field"><span class="data-key">Source</span><a class="data-link" [href]="a._source.urlPost" target="_blank">{{ a._source.websiteUrl }}</a></div>
+                </div>
               </div>
-                
-           </div>
-       </div>  
-       
-    </ng-template>
-    <ng-template #non>
-      aucunes données!!!
-    </ng-template>
-  </div>
- 
-  </div>
+            </ng-template>
+
+            <ng-template #non>
+              <div class="empty-state">
+                <mat-icon>search_off</mat-icon>
+                <p>Aucun résultat. Essayez d'autres mots-clés.</p>
+              </div>
+            </ng-template>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </form>
 </div>
- </div>
- <!--button pour le telechargement des données en csv-->
-
- <div *ngIf="getDownloadStatus()==true ;else el " > <p>   <button class="btn3 btn-success" type="button" (click)="fileDowload()" [disabled]="page==undefined || page=='' || page?.hits?.hits.length==0"><mat-icon>save_alt</mat-icon> <mat-label class="a1"> Telecharger </mat-label> </button></div>
-<ng-template  #el><p> 
-
-  <button  class="btn btn-success" style="margin-left:50px ;"  > <mat-icon>lock</mat-icon>Telecharger
-  </button></p></ng-template>
-
-
- 
-        </form>

@@ -5,6 +5,7 @@ import { FormGroup,FormBuilder, Validators} from '@angular/forms';
 import { Chart } from 'chart.js';
 import { DataServiceService } from '../data-service.service';
 import { formatDate } from '@angular/common';
+import { environment } from '../../environments/environment';
 @Component({
   selector: 'app-recherche-by-keywords',
   templateUrl: './recherche-by-keywords.component.html',
@@ -23,10 +24,10 @@ export class RechercheByKeywordsComponent implements OnInit {
   y1: Array<number> = [];
   // addresse du serveur elasticsearch
   headers = new HttpHeaders().set('Content-Type', 'application/json');
-  h2= this.headers.append('Authorization','Basic ' + btoa('elastic:A0VtjSaDA1h494P6ZC42iD0c'));
+  h2= this.headers;
 
 
-  url="https://std.es.us-central1.gcp.cloud.es.io:9243/echantillon/_search"
+  url = environment.elasticsearchUrl;
   
   constructor(private http:HttpClient, private dataservice: DataServiceService, private formbuilder:FormBuilder) { 
     

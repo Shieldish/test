@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { EventEmitter, Injectable, Output } from '@angular/core';
 import { map, Observable, of } from 'rxjs';
 import { Usermodule } from './usermodule';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,7 @@ import { Usermodule } from './usermodule';
 export class DataServiceService {
   redirectUrl:any;
  
-  baseUrl:string = "http://localhost:8081";
+  baseUrl: string = environment.apiUrl;
 
 @Output() getLoggedInName: EventEmitter<any> = new EventEmitter();
   Usermodule: any;

@@ -1,61 +1,94 @@
+<mat-sidenav-container class="sidenav-container">
 
-<mat-sidenav-container class="sidenav-container" >
-  <mat-sidenav #sidenav  class="sidenav" (click)="sidenav.close()">
-    <mat-toolbar>Menu</mat-toolbar>
-    <br>
-    <mat-nav-list >
-      
-      <a class="a" mat-list-item routerLinkActive="list-item-active" routerLink="/home">
-        <mat-icon>home</mat-icon> Home
-      </a>
-      
-      <br>
-      
-      <a class="a" mat-list-item routerLinkActive="list-item-active" routerLink="/recherche_all">
-        <mat-icon >visibility</mat-icon> Apperçu
-      </a>
-      <br>
-      
- <a class="a" mat-list-item routerLinkActive="list-item-active" routerLink="/rechercheBK">
-        <mat-icon >search</mat-icon> <a class="a1" > Recherche </a>
-      </a>
-      
-      <br >
-      
-      
-      <a class="a" mat-list-item routerLinkActive="list-item-active" routerLink="/requete">
-        <mat-icon >code </mat-icon>  Faire une requ&ecirc;te
-      </a>
-      
-      <br>
-      <a class="a" mat-list-item  [hidden]="!isAdmin()"   *ngIf="logoutbtn"  routerLink="/admindashboard" routerLinkActive="active"> <mat-icon>group_add</mat-icon> Admin  </a>
+  <!-- ── Sidenav ── -->
+  <mat-sidenav #sidenav class="sidenav" (click)="sidenav.close()">
 
-      <br>
-      <hr style="background-color: white;">
-      <a class="a" mat-list-item *ngIf="logoutbtn"  (click)="logout()"> <mat-icon >exit_to_app</mat-icon> Logout</a>
-      
-     
-    </mat-nav-list>
+    <!-- Brand -->
+    <div class="sidenav-brand">
+      <div class="brand-icon">
+        <mat-icon>translate</mat-icon>
+      </div>
+      <div>
+        <div class="brand-name">LFI3</div>
+        <div class="brand-sub">Analyse multilingue</div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="sidenav-nav" (click)="$event.stopPropagation()">
+
+      <span class="nav-section-label">Navigation</span>
+
+      <a class="nav-item" routerLinkActive="list-item-active" routerLink="/home">
+        <mat-icon>home</mat-icon>
+        Accueil
+      </a>
+
+      <span class="nav-section-label">Données</span>
+
+      <a class="nav-item" routerLinkActive="list-item-active" routerLink="/recherche_all">
+        <mat-icon>bar_chart</mat-icon>
+        Aperçu général
+      </a>
+
+      <a class="nav-item" routerLinkActive="list-item-active" routerLink="/rechercheBK">
+        <mat-icon>search</mat-icon>
+        Recherche par mots-clés
+      </a>
+
+      <a class="nav-item" routerLinkActive="list-item-active" routerLink="/requete">
+        <mat-icon>tune</mat-icon>
+        Requête avancée
+      </a>
+
+      <ng-container *ngIf="logoutbtn && isAdmin()">
+        <span class="nav-section-label">Administration</span>
+        <a class="nav-item" routerLink="/admindashboard" routerLinkActive="active">
+          <mat-icon>manage_accounts</mat-icon>
+          Gestion des utilisateurs
+        </a>
+      </ng-container>
+
+    </nav>
+
+    <!-- Footer logout -->
+    <div class="sidenav-footer" *ngIf="logoutbtn">
+      <button class="logout-btn" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        Déconnexion
+      </button>
+    </div>
+
   </mat-sidenav>
+
+  <!-- ── Main Content ── -->
   <mat-sidenav-content>
-<mat-toolbar color="primary">
-  <button
-      
-  type="button"
-  aria-label="Toggle sidenav"
-  mat-icon-button
-  (click)="sidenav.toggle()"
-  *ngIf="bool==true">
-  <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
-</button>
-  
-  <span class="example-spacer"></span>
-  <a  class="anav" routerLinkActive="list-item-active" routerLink="/About"> 
-    A propos de
-  </a>
-  <a  class="anav" routerLinkActive="list-item-active" routerLink="/Contact"> Contact </a>
-     
-</mat-toolbar>
-<router-outlet></router-outlet>
+
+    <mat-toolbar class="top-toolbar">
+      <button
+        type="button"
+        aria-label="Ouvrir le menu"
+        mat-icon-button
+        class="menu-toggle"
+        (click)="sidenav.toggle()"
+        *ngIf="bool == true">
+        <mat-icon>menu</mat-icon>
+      </button>
+
+      <span class="toolbar-spacer"></span>
+
+      <a class="toolbar-nav-link" routerLinkActive="list-item-active" routerLink="/About">
+        À propos
+      </a>
+      <a class="toolbar-nav-link" routerLinkActive="list-item-active" routerLink="/Contact">
+        Contact
+      </a>
+    </mat-toolbar>
+
+    <div class="main-content">
+      <router-outlet></router-outlet>
+    </div>
+
   </mat-sidenav-content>
+
 </mat-sidenav-container>

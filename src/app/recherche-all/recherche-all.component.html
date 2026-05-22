@@ -1,73 +1,180 @@
-<!--butons de visualisation -->
-<div class="row" >
-  <div class="col-md-2">
+<div class="page-container">
+
+  <div class="page-header">
+    <h1 class="page-title">Aperçu général</h1>
+    <p class="page-subtitle">Exploration et visualisation de l'ensemble des données</p>
   </div>
-  <div class="col-md-8 col-md-offset-2">
-<div class="buton">
-  
-<button class="btn1 btn-primary lg" type="button" (click)="Visualisation()"><mat-icon>donut_small</mat-icon><mat-label class="a1"> Visualisation des langues</mat-label></button>
-<button class="btn1 btn-primary lg" type="button"(click)="Visualisation2()" ><mat-icon>bar_chart</mat-icon><mat-label class="a1"> Visualisation des dates </mat-label></button>
-</div></div></div>
 
-<!-- affichage des visualisations-->
-<div *ngIf="page==undefined ;then no else ok"></div>
-<ng-template #ok>
-<div class="chart-container">
-  <canvas id="canvas1" >{{ chart}}</canvas>
-</div>
-</ng-template>
-<ng-template #no> <canvas>  </canvas> </ng-template>
+  <!-- Loading / Error states -->
+  <div class="alert alert-info" *ngIf="loading">
+    <mat-icon style="font-size:18px;width:18px;height:18px;">hourglass_empty</mat-icon>
+    Chargement des données…
+  </div>
+  <div class="alert alert-danger" *ngIf="error">
+    <mat-icon style="font-size:18px;width:18px;height:18px;">error_outline</mat-icon>
+    Impossible de contacter Elasticsearch. Vérifiez que le serveur est démarré sur <code>localhost:9200</code>.
+  </div>
 
- 
-<!--affichage du fichier json qui contients les enregistrements-->     
-<div class="accordion accordion-flush" id="accordionExample">
-  <div class="accordion-item">
-  <h2 class="accordion-header" id="headingTwo">
-    <button (click)="onSearchAll()" 
-    id="btn"  
-    class="accordion-button collapsed" 
-    type="button" data-bs-toggle="collapse"
-     data-bs-target="#collapseTwo" 
-       aria-expanded="false" 
-     aria-controls="collapseTwo">
-      <mat-label class="a1">Afficher les données</mat-label>
-    </button>
-  </h2>
-  <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-    <div class="accordion-body">
-    <div *ngIf="page==undefined || page?.hits?.hits.length==0;then non else oui"></div>
-    <ng-template #oui>
-        <div class="container">
-           <div class="panel">   
-            <a class="a3">total:{{page?.hits?.hits.length}}</a>
-            <br>
-            <br>
-             
-            <div *ngFor="let a of page?.hits?.hits">
-              <!--les données-->
-          
-              <p><em>IdOwner</em> : {{a._source.idOwner}}</p>
-              <p><em>IdPost</em> : {{a._source.idPost}}</p>
-              <p><em>DateOfInsertion</em> : {{a._source.dateOfInsertion}}</p>
-              <p><em>DateOfPost</em> : {{a._source.dateOfPost}}</p>
-              <p><em>FormattedDateOfPost </em> : {{a._source.formattedDateOfPost}}</p>
-              <p><em>LangPost</em> : {{a._source.langPost}}</p>
-              <p><em>Content</em> : {{a._source.content}}</p>
-              <p><em>TreatedPost</em> : {{a._source.treatedPost}}</p>
-              <p><em>UrlPost</em> : {{a._source.urlPost}}</p><p>
-              <p><em>WebsiteUrl</em> : {{a._source.websiteUrl}}</p>
-              <br>
+  <!-- Stats strip -->
+  <div class="stats-strip" *ngIf="!loading && !error">
+    <div class="stat-card">
+      <div class="stat-icon stat-icon--blue"><mat-icon>article</mat-icon></div>
+      <div class="stat-info">
+        <div class="stat-value">{{ totalDocs | number }}</div>
+        <div class="stat-label">Documents</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon stat-icon--green"><mat-icon>translate</mat-icon></div>
+      <div class="stat-info">
+        <div class="stat-value">{{ langCount }}</div>
+        <div class="stat-label">Langues</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon stat-icon--orange"><mat-icon>event</mat-icon></div>
+      <div class="stat-info">
+        <div class="stat-value">{{ dateMin }}</div>
+        <div class="stat-label">Première date</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon stat-icon--purple"><mat-icon>event_available</mat-icon></div>
+      <div class="stat-info">
+        <div class="stat-value">{{ dateMax }}</div>
+        <div class="stat-label">Dernière date</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart panel -->
+  <div class="chart-panel section-card" *ngIf="!loading && !error">
+
+    <!-- Tab sub-menu -->
+    <div class="chart-tabs">
+      <button
+        *ngFor="let tab of CHART_TABS"
+        class="chart-tab"
+        [class.chart-tab--active]="activeChart === tab.id"
+        (click)="selectChart(tab.id)"
+        type="button">
+        <mat-icon class="chart-tab-icon">{{ tab.icon }}</mat-icon>
+        <span>{{ tab.label }}</span>
+      </button>
+    </div>
+
+    <!-- Single canvas -->
+    <div class="chart-canvas-wrap">
+      <canvas id="cChart"></canvas>
+    </div>
+
+  </div>
+
+  <!-- Data accordion -->
+  <div class="accordion accordion-flush" id="accordionExample" style="margin-top: 24px;">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingTwo">
+        <button
+          (click)="onSearchAll()"
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseTwo"
+          aria-expanded="false"
+          aria-controls="collapseTwo">
+          <mat-icon style="font-size:18px;width:18px;height:18px;margin-right:8px;">table_rows</mat-icon>
+          Afficher les données brutes
+          <span class="record-count" *ngIf="page?.hits?.hits?.length">
+            {{ page?.hits?.hits?.length }} résultats
+          </span>
+        </button>
+      </h2>
+      <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+        <div class="accordion-body">
+
+          <ng-template [ngIf]="totalHits > 0" [ngIfElse]="non">
+
+            <!-- Pagination info + controls (top) -->
+            <div class="pagination-bar">
+              <span class="pagination-info">
+                {{ (currentPage - 1) * pageSize + 1 }}–{{ currentPage * pageSize > totalHits ? totalHits : currentPage * pageSize }}
+                sur {{ totalHits }} résultats
+              </span>
+              <div class="pagination-controls">
+                <button class="page-btn" (click)="goToPage(1)" [disabled]="currentPage === 1" title="Première page">
+                  <mat-icon>first_page</mat-icon>
+                </button>
+                <button class="page-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1" title="Page précédente">
+                  <mat-icon>chevron_left</mat-icon>
+                </button>
+                <button
+                  *ngFor="let p of pageNumbers"
+                  class="page-btn page-num"
+                  [class.page-btn--active]="p === currentPage"
+                  (click)="goToPage(p)">
+                  {{ p }}
+                </button>
+                <button class="page-btn" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages" title="Page suivante">
+                  <mat-icon>chevron_right</mat-icon>
+                </button>
+                <button class="page-btn" (click)="goToPage(totalPages)" [disabled]="currentPage === totalPages" title="Dernière page">
+                  <mat-icon>last_page</mat-icon>
+                </button>
               </div>
-                
-           </div>
-       </div>  
-       
-    </ng-template>
-    <ng-template #non>
-      aucunes données!!!
-    </ng-template>
+            </div>
+
+            <!-- Paged data cards -->
+            <div class="data-grid">
+              <div class="data-card" *ngFor="let a of pagedHits">
+                <div class="data-card-header">
+                  <span class="lang-badge">{{ a._source.langPost }}</span>
+                  <span class="data-date">{{ a._source.dateOfPost }}</span>
+                </div>
+                <div class="data-field"><span class="data-key">IdOwner</span><span class="data-val">{{ a._source.idOwner }}</span></div>
+                <div class="data-field"><span class="data-key">IdPost</span><span class="data-val">{{ a._source.idPost }}</span></div>
+                <div class="data-field content-field"><span class="data-key">Contenu</span><span class="data-val">{{ a._source.content }}</span></div>
+                <div class="data-field"><span class="data-key">Source</span><a class="data-link" [href]="a._source.urlPost" target="_blank">{{ a._source.websiteUrl }}</a></div>
+              </div>
+            </div>
+
+            <!-- Pagination controls (bottom) -->
+            <div class="pagination-bar pagination-bar--bottom">
+              <span class="pagination-info">Page {{ currentPage }} / {{ totalPages }}</span>
+              <div class="pagination-controls">
+                <button class="page-btn" (click)="goToPage(1)" [disabled]="currentPage === 1">
+                  <mat-icon>first_page</mat-icon>
+                </button>
+                <button class="page-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">
+                  <mat-icon>chevron_left</mat-icon>
+                </button>
+                <button
+                  *ngFor="let p of pageNumbers"
+                  class="page-btn page-num"
+                  [class.page-btn--active]="p === currentPage"
+                  (click)="goToPage(p)">
+                  {{ p }}
+                </button>
+                <button class="page-btn" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">
+                  <mat-icon>chevron_right</mat-icon>
+                </button>
+                <button class="page-btn" (click)="goToPage(totalPages)" [disabled]="currentPage === totalPages">
+                  <mat-icon>last_page</mat-icon>
+                </button>
+              </div>
+            </div>
+
+          </ng-template>
+
+          <ng-template #non>
+            <div class="empty-state">
+              <mat-icon>search_off</mat-icon>
+              <p>Aucune donnée disponible. Cliquez sur l'en-tête pour charger les données.</p>
+            </div>
+          </ng-template>
+
+        </div>
+      </div>
+    </div>
   </div>
- 
-  </div>
+
 </div>
- </div>
