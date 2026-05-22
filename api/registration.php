@@ -69,8 +69,7 @@ if(isset($postdata) && !empty($postdata))
  <h3> Email:  <span style=color:green> <strong> $email </strong> </span> </h3> <br>
   ------------------------ <br>
   Veuillez cliquer sur ce lien pour activer votre compte: <br>
-
-       <h3>  https://pfe2022teste.000webhostapp.com/activate.php?token=$token <br> ";
+  <h3><a href='" . (getenv('APP_URL') ?: 'http://localhost:8081') . "/activate.php?token=$token'>Activer mon compte</a></h3>";
 
   $headers = "From:no-reply <kossisamuel.gabiam@fss.u-sfax.tn>" . "\r\n" ;
   $headers .= "MIME-Version: 1.0\r\n";

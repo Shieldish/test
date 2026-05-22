@@ -2,7 +2,7 @@
 <html>
    <head>
       <title>Reset password</title>
-      <!-- <meta http-equiv = "refresh" content = "3; url = https://pfe2022teste.000webhostapp.com/loginresetpassword" /> -->
+      <!-- <meta http-equiv = "refresh" content = "3; url = http://localhost:8080/loginresetpassword" /> -->
    </head>
    <body>
      
@@ -49,15 +49,15 @@ $request = json_decode($postdata);
 
              
 
-            // header ('https://pfe2022test.000webhostapp.com/loginresetpassword');
+            // header ('http://localhost:8080/loginresetpassword');
 
             
 
-            $msg='<div  color="green" class="data"><p style="color:blue">you will be redirect to reset password dashboard  or click  <a href="https://pfe2022test.000webhostapp.com/loginresetpassword">here</a> to reste your account
+            $msg='<div  color="green" class="data"><p style="color:blue">you will be redirect to reset password dashboard  or click  <a href="http://localhost:8080/loginresetpassword">here</a> to reste your account
               <p>   <html>
               <head>
                  <title>Reset password</title>
-                 <meta http-equiv = "refresh" content = "3; url = https://pfe2022teste.000webhostapp.com/loginresetpassword" />
+                 <meta http-equiv = "refresh" content = "3; url = http://localhost:8080/loginresetpassword" />
               </head>
             </html> 
                 </p> 

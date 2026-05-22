@@ -9,8 +9,7 @@ import { Usermodule } from './usermodule';
 export class DataServiceService {
   redirectUrl:any;
  
- // baseUrl:string = "http://localhost/Api";
-  baseUrl:string   ="https://pfe2022test.000webhostapp.com" ;  // l'adresse de la base de donnés qui heberge les donnees des utilisateurs  ici : lampp/lampp/htdocs/Api (le repertoire )
+  baseUrl:string = "http://localhost:8081";
 
 @Output() getLoggedInName: EventEmitter<any> = new EventEmitter();
   Usermodule: any;

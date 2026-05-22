@@ -62,7 +62,7 @@ if(isset($postdata) && !empty($postdata))
                <h3>  Email: $email  </h3> <br>
            Veuillez cliquer sur le lien suivant pour réinitialiser votre mot de passe: <br>
 
-                    https://pfe2022teste.000webhostapp.com/resetpassword.php?token=$token";
+                    <h3><a href='" . (getenv('APP_URL') ?: 'http://localhost:8081') . "/resetpassword.php?token=$token'>Réinitialiser mon mot de passe</a></h3>";
 
   $headers = "From:no-reply <kossisamuel.gabiam@fss.u-sfax.tn>" . "\r\n" ;
   $headers .= "MIME-Version: 1.0\r\n";
