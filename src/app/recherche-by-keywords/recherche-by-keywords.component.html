@@ -109,9 +109,24 @@
         <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
           <div class="accordion-body">
 
-            <ng-template [ngIf]="page?.hits?.hits?.length > 0" [ngIfElse]="non">
+            <ng-template [ngIf]="totalHits > 0" [ngIfElse]="non">
+
+              <div class="pagination-bar">
+                <span class="pagination-info">
+                  {{ (currentPage - 1) * pageSize + 1 }}–{{ currentPage * pageSize > totalHits ? totalHits : currentPage * pageSize }}
+                  sur {{ totalHits }} résultat(s)
+                </span>
+                <div class="pagination-controls">
+                  <button class="page-btn" (click)="goToPage(1)" [disabled]="currentPage === 1"><mat-icon>first_page</mat-icon></button>
+                  <button class="page-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"><mat-icon>chevron_left</mat-icon></button>
+                  <button *ngFor="let p of pageNumbers" class="page-btn page-num" [class.page-btn--active]="p === currentPage" (click)="goToPage(p)">{{ p }}</button>
+                  <button class="page-btn" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages"><mat-icon>chevron_right</mat-icon></button>
+                  <button class="page-btn" (click)="goToPage(totalPages)" [disabled]="currentPage === totalPages"><mat-icon>last_page</mat-icon></button>
+                </div>
+              </div>
+
               <div class="data-grid">
-                <div class="data-card" *ngFor="let a of page?.hits?.hits">
+                <div class="data-card" *ngFor="let a of pagedHits">
                   <div class="data-card-header">
                     <span class="lang-badge">{{ a._source.langPost }}</span>
                     <span class="data-date">{{ a._source.dateOfPost }}</span>
@@ -122,6 +137,18 @@
                   <div class="data-field"><span class="data-key">Source</span><a class="data-link" [href]="a._source.urlPost" target="_blank">{{ a._source.websiteUrl }}</a></div>
                 </div>
               </div>
+
+              <div class="pagination-bar pagination-bar--bottom">
+                <span class="pagination-info">Page {{ currentPage }} / {{ totalPages }}</span>
+                <div class="pagination-controls">
+                  <button class="page-btn" (click)="goToPage(1)" [disabled]="currentPage === 1"><mat-icon>first_page</mat-icon></button>
+                  <button class="page-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"><mat-icon>chevron_left</mat-icon></button>
+                  <button *ngFor="let p of pageNumbers" class="page-btn page-num" [class.page-btn--active]="p === currentPage" (click)="goToPage(p)">{{ p }}</button>
+                  <button class="page-btn" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages"><mat-icon>chevron_right</mat-icon></button>
+                  <button class="page-btn" (click)="goToPage(totalPages)" [disabled]="currentPage === totalPages"><mat-icon>last_page</mat-icon></button>
+                </div>
+              </div>
+
             </ng-template>
 
             <ng-template #non>

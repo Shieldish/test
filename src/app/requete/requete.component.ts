@@ -20,8 +20,24 @@ export class RequeteComponent implements OnInit {
   h2= this.headers;
 
   url = environment.elasticsearchUrl;
-  page:any
-  chart1: any
+  page: any;
+  chart1: any;
+
+  // Pagination
+  currentPage = 1;
+  pageSize    = 9;
+  get pagedHits(): any[] {
+    const hits: any[] = this.page?.hits?.hits ?? [];
+    return hits.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize);
+  }
+  get totalHits(): number  { return this.page?.hits?.hits?.length ?? 0; }
+  get totalPages(): number { return Math.ceil(this.totalHits / this.pageSize); }
+  get pageNumbers(): number[] {
+    const pages: number[] = [];
+    for (let i = Math.max(1, this.currentPage - 2); i <= Math.min(this.totalPages, this.currentPage + 2); i++) pages.push(i);
+    return pages;
+  }
+  goToPage(p: number) { if (p >= 1 && p <= this.totalPages) this.currentPage = p; }
   // controle sur daterangz
   range=new FormGroup({
     start:new FormControl(),
@@ -172,8 +188,8 @@ export class RequeteComponent implements OnInit {
 
 // recuperer les données pour les afficher
 data(){
-
-  this.page=this.doc 
+  this.page = this.doc;
+  this.currentPage = 1;
  // console.log(this.page)
 
 }

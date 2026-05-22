@@ -19,7 +19,7 @@ export class RechercheAllComponent implements OnInit {
 
   // Pagination données brutes
   currentPage  = 1;
-  pageSize     = 10;
+  pageSize     = 9;
   get pagedHits(): any[] {
     const hits: any[] = this.page?.hits?.hits ?? [];
     const start = (this.currentPage - 1) * this.pageSize;

@@ -3,11 +3,12 @@ services:
     image: mysql:8.0
     container_name: app_mysql
     restart: unless-stopped
+    env_file: .env
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: id19066703_pfe_users
-      MYSQL_USER: id19066703_pfe
-      MYSQL_PASSWORD: "fFrP955!N3?G"
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
@@ -25,6 +26,7 @@ services:
       dockerfile: Dockerfile.php
     container_name: app_php
     restart: unless-stopped
+    env_file: .env
     ports:
       - "8081:80"
     depends_on:
@@ -32,9 +34,10 @@ services:
         condition: service_healthy
     environment:
       DB_HOST: mysql
-      DB_USER: id19066703_pfe
-      DB_PASSWORD: "fFrP955!N3?G"
-      DB_NAME: id19066703_pfe_users
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      APP_FRONT_URL: ${APP_FRONT_URL}
 
   node:
     build:
